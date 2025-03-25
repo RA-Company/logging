@@ -3,8 +3,6 @@ package logging
 import (
 	"context"
 	"testing"
-
-	"gitlab.com/ra-com/vpn/main.git/pkg/config"
 )
 
 func TestLogger_GetLevel(t *testing.T) {
@@ -26,7 +24,7 @@ func TestLogger_GetLevel(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		config.LogLevel = tc.logLevel
+		Logs.LogLevel = tc.logLevel
 
 		got, _, _ := Logs.GetLevel(tc.level, context.Background())
 		if got != tc.want {
@@ -36,12 +34,12 @@ func TestLogger_GetLevel(t *testing.T) {
 }
 
 func ExampleLogging_Print() {
-	config.LogLevel = 0
-	config.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
-	config.LogShowTime = false
+	Logs.LogLevel = 0
+	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
+	Logs.DontShowTime = true
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, config.CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
+	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
 
 	testCases := []int{-1, 0, 1, 2, 3, 4, 5}
 
@@ -84,12 +82,12 @@ func ExampleLogging_Print() {
 }
 
 func ExampleLogging_Info() {
-	config.LogLevel = 0
-	config.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
-	config.LogShowTime = false
+	Logs.LogLevel = 0
+	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
+	Logs.DontShowTime = true
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, config.CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
+	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
 
 	Logs.Info("Hello World")
 	Logs.Infof("Hello %s", "Universe")
@@ -103,15 +101,15 @@ func ExampleLogging_Info() {
 }
 
 func ExampleLogging_Debug() {
-	config.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
-	config.LogShowTime = false
+	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
+	Logs.DontShowTime = true
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, config.CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
+	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
 
 	testCases := []int{0, 1, 2, 3}
 	for _, tc := range testCases {
-		config.LogLevel = tc
+		Logs.LogLevel = tc
 
 		Logs.Debug("Hello World")
 		Logs.Debugf("Hello %s", "Universe")
@@ -127,15 +125,15 @@ func ExampleLogging_Debug() {
 }
 
 func ExampleLogging_Warn() {
-	config.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
-	config.LogShowTime = false
+	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
+	Logs.DontShowTime = true
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, config.CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
+	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
 
 	testCases := []int{0, 1, 2, 3}
 	for _, tc := range testCases {
-		config.LogLevel = tc
+		Logs.LogLevel = tc
 
 		Logs.Warn("Hello World")
 		Logs.Warnf("Hello %s", "Universe")
@@ -155,15 +153,15 @@ func ExampleLogging_Warn() {
 }
 
 func ExampleLogging_Error() {
-	config.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
-	config.LogShowTime = false
+	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
+	Logs.DontShowTime = true
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, config.CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
+	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
 
 	testCases := []int{0, 1, 2, 3}
 	for _, tc := range testCases {
-		config.LogLevel = tc
+		Logs.LogLevel = tc
 
 		Logs.Error("Hello World")
 		Logs.Errorf("Hello %s", "Universe")
@@ -187,15 +185,15 @@ func ExampleLogging_Error() {
 }
 
 func ExampleLogging_Fatal() {
-	config.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
-	config.LogShowTime = false
+	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
+	Logs.DontShowTime = true
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, config.CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
+	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
 
 	testCases := []int{0, 1, 2, 3}
 	for _, tc := range testCases {
-		config.LogLevel = tc
+		Logs.LogLevel = tc
 
 		Logs.Fatal("Hello World")
 		Logs.Fatalf("Hello %s", "Universe")

@@ -10,7 +10,7 @@ import (
 type CtxKey string
 
 var (
-	Logs       *Logging
+	Logs       Logging
 	CtxKeyUUID CtxKey = "process-uuid" // Context key for process UUID
 )
 
