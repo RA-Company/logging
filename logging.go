@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Context key type
@@ -15,14 +17,18 @@ var (
 )
 
 type Logging struct {
-	uuid         string
-	LogLevel     int    // Log level (0 - debug, 1 - warning, 2 - error, 3 - fatal, default 0)
-	ConsoleApp   bool   // Console application flag (do not print logs in console app)
-	DontShowTime bool   // Do not show time in logs
-	title        string // Process title
+	UUID       string
+	LogLevel   int    // Log level (0 - debug, 1 - warning, 2 - error, 3 - fatal, default 0)
+	ConsoleApp bool   // Console application flag (do not print logs in console app)
+	ShowTime   bool   // Show time in logs
+	title      string // Process title
 }
 
 // Get level of logging by level and context if it's present
+//
+// Parameters:
+//   - level - log level
+//   - ctx - context
 func (logger *Logging) GetLevel(level int, ctx interface{}) (string, string, bool) {
 	var uuid string
 	withContext := false
@@ -32,11 +38,11 @@ func (logger *Logging) GetLevel(level int, ctx interface{}) (string, string, boo
 		if ctx.(context.Context).Value(CtxKeyUUID) != nil {
 			uuid = ctx.(context.Context).Value(CtxKeyUUID).(string)
 		} else {
-			uuid = logger.uuid
+			uuid = logger.UUID
 		}
 		withContext = true
 	default:
-		uuid = logger.uuid
+		uuid = logger.UUID
 	}
 
 	levels := []string{"DBG", "WRN", "ERR", "FTL", "INF"}
@@ -67,7 +73,7 @@ func (logger *Logging) Print(level int, args ...interface{}) {
 
 	if lev != "" {
 		t := time.Now()
-		if logger.DontShowTime {
+		if logger.ShowTime {
 			if withContext {
 				fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, fmt.Sprint(args[1:]...))
 			} else {
@@ -100,7 +106,7 @@ func (logger *Logging) Printf(level int, args ...interface{}) {
 	if lev != "" {
 		t := time.Now()
 		if withContext {
-			if logger.DontShowTime {
+			if logger.ShowTime {
 				if len(args) > 2 {
 					fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, fmt.Sprintf(args[1].(string), args[2:]...))
 				} else {
@@ -114,7 +120,7 @@ func (logger *Logging) Printf(level int, args ...interface{}) {
 				}
 			}
 		} else {
-			if logger.DontShowTime {
+			if logger.ShowTime {
 				fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, fmt.Sprintf(args[0].(string), args[1:]...))
 			} else {
 				fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, fmt.Sprintf(args[0].(string), args[1:]...))
@@ -174,17 +180,21 @@ func (logger *Logging) Fatalf(args ...interface{}) {
 	logger.Printf(3, args...)
 }
 
-// Starting logs
+// Starting service
 //
 // Parameters:
-//   - uuid - default process UUID
 //   - title - process title
-func (logger *Logging) Starting(uuid, title string) {
+func (logger *Logging) Starting(title string) {
 	logger.title = title
 	logger.Infof("%s service is starting...", title)
 }
 
-// Stopping logs
+// Stopping service
 func (logger *Logging) Stopping() {
 	logger.Infof("%s service is stopping...", logger.title)
+}
+
+// Initialize default parameters
+func init() {
+	Logs.UUID = uuid.New().String()
 }

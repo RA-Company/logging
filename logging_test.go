@@ -35,8 +35,10 @@ func TestLogger_GetLevel(t *testing.T) {
 
 func ExampleLogging_Print() {
 	Logs.LogLevel = 0
-	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
-	Logs.DontShowTime = true
+	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
+	Logs.Starting("test")
+	Logs.ShowTime = false
+	defer Logs.Stopping()
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
@@ -51,6 +53,8 @@ func ExampleLogging_Print() {
 	}
 
 	// Unordered output:
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is starting...
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is stopping...
 	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
 	// WRN	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
 	// ERR	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
@@ -82,9 +86,10 @@ func ExampleLogging_Print() {
 }
 
 func ExampleLogging_Info() {
-	Logs.LogLevel = 0
-	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
-	Logs.DontShowTime = true
+	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
+	Logs.Starting("test")
+	Logs.ShowTime = false
+	defer Logs.Stopping()
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
@@ -94,6 +99,8 @@ func ExampleLogging_Info() {
 	Logs.Info(ctx, "Hello World")
 	Logs.Infof(ctx, "Hello %s", "Universe")
 	// Unordered output:
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is starting...
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is stopping...
 	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
 	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
 	// INF	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
@@ -101,8 +108,10 @@ func ExampleLogging_Info() {
 }
 
 func ExampleLogging_Debug() {
-	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
-	Logs.DontShowTime = true
+	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
+	Logs.Starting("test")
+	Logs.ShowTime = false
+	defer Logs.Stopping()
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
@@ -118,6 +127,8 @@ func ExampleLogging_Debug() {
 	}
 
 	// Unordered output:
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is starting...
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is stopping...
 	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
 	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
 	// DBG	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
@@ -125,8 +136,10 @@ func ExampleLogging_Debug() {
 }
 
 func ExampleLogging_Warn() {
-	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
-	Logs.DontShowTime = true
+	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
+	Logs.Starting("test")
+	Logs.ShowTime = false
+	defer Logs.Stopping()
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
@@ -142,6 +155,8 @@ func ExampleLogging_Warn() {
 	}
 
 	// Unordered output:
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is starting...
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is stopping...
 	// WRN	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
 	// WRN	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
 	// WRN	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
@@ -153,8 +168,10 @@ func ExampleLogging_Warn() {
 }
 
 func ExampleLogging_Error() {
-	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
-	Logs.DontShowTime = true
+	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
+	Logs.Starting("test")
+	Logs.ShowTime = false
+	defer Logs.Stopping()
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
@@ -170,6 +187,8 @@ func ExampleLogging_Error() {
 	}
 
 	// Unordered output:
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is starting...
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is stopping...
 	// ERR	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
 	// ERR	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
 	// ERR	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
@@ -185,8 +204,10 @@ func ExampleLogging_Error() {
 }
 
 func ExampleLogging_Fatal() {
-	Logs.Starting("b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049", "test")
-	Logs.DontShowTime = true
+	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
+	Logs.Starting("test")
+	Logs.ShowTime = false
+	defer Logs.Stopping()
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
@@ -202,6 +223,8 @@ func ExampleLogging_Fatal() {
 	}
 
 	// Unordered output:
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is starting...
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	test service is stopping...
 	// FTL	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
 	// FTL	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
 	// FTL	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
