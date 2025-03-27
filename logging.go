@@ -196,5 +196,8 @@ func (logger *Logging) Stopping() {
 
 // Initialize default parameters
 func init() {
+	Logs.ShowTime = true
+	Logs.ConsoleApp = false
+	Logs.LogLevel = 0
 	Logs.UUID = uuid.New().String()
 }
