@@ -1,8 +1,10 @@
 # Simple GO logger
 
-Simple output log with UUID according by context.Context parameter. When logger is attached it's generate random global UUID.
-This approach is used for services performing parallel tasks in order to separate processes.
-Когда функции вызываются без параметра context.Context используется глобальное значение UUID
+Simple output log with UUID according by context.Context parameter. 
+
+When logger is attached it's generate random global UUID.\
+This approach is used for services performing parallel tasks in order to separate processes.\
+When functions are called without a context.Context parameter, a global UUID value is used.
 
 # Example
 Usage:
