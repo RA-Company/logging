@@ -29,7 +29,7 @@ type Logging struct {
 // Parameters:
 //   - level - log level
 //   - ctx - context
-func (logger *Logging) GetLevel(level int, ctx interface{}) (string, string, bool) {
+func (logger *Logging) GetLevel(level int, ctx any) (string, string, bool) {
 	var uuid string
 	withContext := false
 
@@ -58,7 +58,7 @@ func (logger *Logging) GetLevel(level int, ctx interface{}) (string, string, boo
 	return levels[level], uuid, withContext
 }
 
-func (logger *Logging) Print(level int, args ...interface{}) {
+func (logger *Logging) Print(level int, args ...any) {
 	lev, uuid, withContext := logger.GetLevel(level, args[0])
 	if logger.ConsoleApp {
 		if level == 2 || level == 3 {
@@ -90,7 +90,7 @@ func (logger *Logging) Print(level int, args ...interface{}) {
 	}
 }
 
-func (logger *Logging) Printf(level int, args ...interface{}) {
+func (logger *Logging) Printf(level int, args ...any) {
 	lev, uuid, withContext := logger.GetLevel(level, args[0])
 	if logger.ConsoleApp {
 		if level == 2 || level == 3 {
@@ -140,43 +140,43 @@ func (logger *Logging) TimeToStr(t time.Time) string {
 	return str
 }
 
-func (logger *Logging) Info(args ...interface{}) {
+func (logger *Logging) Info(args ...any) {
 	logger.Print(4, args...)
 }
 
-func (logger *Logging) Infof(args ...interface{}) {
+func (logger *Logging) Infof(args ...any) {
 	logger.Printf(4, args...)
 }
 
-func (logger *Logging) Debug(args ...interface{}) {
+func (logger *Logging) Debug(args ...any) {
 	logger.Print(0, args...)
 }
 
-func (logger *Logging) Debugf(args ...interface{}) {
+func (logger *Logging) Debugf(args ...any) {
 	logger.Printf(0, args...)
 }
 
-func (logger *Logging) Warn(args ...interface{}) {
+func (logger *Logging) Warn(args ...any) {
 	logger.Print(1, args...)
 }
 
-func (logger *Logging) Warnf(args ...interface{}) {
+func (logger *Logging) Warnf(args ...any) {
 	logger.Printf(1, args...)
 }
 
-func (logger *Logging) Error(args ...interface{}) {
+func (logger *Logging) Error(args ...any) {
 	logger.Print(2, args...)
 }
 
-func (logger *Logging) Errorf(args ...interface{}) {
+func (logger *Logging) Errorf(args ...any) {
 	logger.Printf(2, args...)
 }
 
-func (logger *Logging) Fatal(args ...interface{}) {
+func (logger *Logging) Fatal(args ...any) {
 	logger.Print(3, args...)
 }
 
-func (logger *Logging) Fatalf(args ...interface{}) {
+func (logger *Logging) Fatalf(args ...any) {
 	logger.Printf(3, args...)
 }
 
