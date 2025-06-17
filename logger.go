@@ -51,13 +51,14 @@ func (dst *CustomLogger) SetLogger(logger Logger) {
 //
 // Parameters:
 //   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
-//   - text: The debug message to log.
-func (dst *CustomLogger) Debug(ctx context.Context, text string) {
+//   - args: The debug message to log, which can be any number of arguments.
+func (dst *CustomLogger) Debug(ctx context.Context, args ...any) {
 	if dst.logger != nil {
-		dst.logger.Debug(ctx, text)
-	} else {
-		Logs.Debugf(ctx, text)
+		dst.logger.Debug(ctx, args)
+		return
 	}
+
+	Logs.Debugf(ctx, args)
 }
 
 // Info logs an informational message using the provided logger or the default logging mechanism.
@@ -65,13 +66,14 @@ func (dst *CustomLogger) Debug(ctx context.Context, text string) {
 //
 // Parameters:
 //   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
-//   - text: The informational message to log.
-func (dst *CustomLogger) Info(ctx context.Context, text string) {
+//   - args: The informational message to log, which can be any number of arguments.
+func (dst *CustomLogger) Info(ctx context.Context, args ...any) {
 	if dst.logger != nil {
-		dst.logger.Info(ctx, text)
-	} else {
-		Logs.Infof(ctx, text)
+		dst.logger.Info(ctx, args)
+		return
 	}
+
+	Logs.Infof(ctx, args)
 }
 
 // Warn logs a warning message using the provided logger or the default logging mechanism.
@@ -79,13 +81,14 @@ func (dst *CustomLogger) Info(ctx context.Context, text string) {
 //
 // Parameters:
 //   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
-//   - text: The warning message to log.
-func (dst *CustomLogger) Warn(ctx context.Context, text string) {
+//   - args: The warning message to log, which can be any number of arguments.
+func (dst *CustomLogger) Warn(ctx context.Context, args ...any) {
 	if dst.logger != nil {
-		dst.logger.Warn(ctx, text)
-	} else {
-		Logs.Warnf(ctx, text)
+		dst.logger.Warn(ctx, args)
+		return
 	}
+
+	Logs.Warnf(ctx, args)
 }
 
 // Error logs an error message using the provided logger or the default logging mechanism.
@@ -93,13 +96,14 @@ func (dst *CustomLogger) Warn(ctx context.Context, text string) {
 //
 // Parameters:
 //   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
-//   - text: The error message to log.
-func (dst *CustomLogger) Error(ctx context.Context, text string) {
+//   - args: The error message to log, which can be any number of arguments.
+func (dst *CustomLogger) Error(ctx context.Context, args ...any) {
 	if dst.logger != nil {
-		dst.logger.Error(ctx, text)
-	} else {
-		Logs.Errorf(ctx, text)
+		dst.logger.Error(ctx, args)
+		return
 	}
+
+	Logs.Errorf(ctx, args)
 }
 
 // Fatal logs a fatal error message using the provided logger or the default logging mechanism.
@@ -108,11 +112,11 @@ func (dst *CustomLogger) Error(ctx context.Context, text string) {
 // Parameters:
 //   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
 //   - text: The fatal error message to log.
-func (dst *CustomLogger) Fatal(ctx context.Context, text string) {
+func (dst *CustomLogger) Fatal(ctx context.Context, args ...any) {
 	if dst.logger != nil {
-		dst.logger.Fatal(ctx, text)
+		dst.logger.Fatal(ctx, args)
 		os.Exit(1) // Exit with status code 1
-	} else {
-		Logs.Fatalf(ctx, text)
 	}
+
+	Logs.Fatalf(ctx, args)
 }

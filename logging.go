@@ -59,6 +59,11 @@ func (logger *Logging) GetLevel(level int, ctx any) (string, string, bool) {
 	return levels[level], uuid, withContext
 }
 
+// Print logs to console
+//
+// Parameters:
+//   - level - log level (0 - debug, 1 - warning, 2 - error, 3 - fatal, 4 - info)
+//   - args - arguments to print
 func (logger *Logging) Print(level int, args ...any) {
 	lev, uuid, withContext := logger.GetLevel(level, args[0])
 	if logger.ConsoleApp {
@@ -91,6 +96,13 @@ func (logger *Logging) Print(level int, args ...any) {
 	}
 }
 
+// Printf logs formatted output to console
+//
+// Parameters:
+//   - level - log level (0 - debug, 1 - warning, 2 - error, 3 - fatal, 4 - info)
+//   - args - arguments to print
+//     # args[0] - format string
+//     # args[1:] - arguments to format string
 func (logger *Logging) Printf(level int, args ...any) {
 	lev, uuid, withContext := logger.GetLevel(level, args[0])
 	if logger.ConsoleApp {
@@ -130,54 +142,130 @@ func (logger *Logging) Printf(level int, args ...any) {
 	}
 }
 
+// TimeToStr converts time.Time to string in format "2006/01/02 15:04:05.999"
+// It ensures that the string is always 23 characters long by appending "00" or "0" as needed.
+//
+// Parameters:
+//   - t - time.Time object to convert
+//
+// Returns:
+//   - string: representation of the time in the specified format
 func (logger *Logging) TimeToStr(t time.Time) string {
 	str := t.Format("2006/01/02 15:04:05.999")
-	if len(str) == 21 {
-		str += "00"
+
+	if len(str) == 19 {
+		return str + ".000"
+	} else if len(str) == 21 {
+		return str + "00"
 	} else if len(str) == 22 {
-		str += "0"
+		return str + "0"
 	}
 
 	return str
 }
 
+// Info logs an informational message.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - arguments to print
 func (logger *Logging) Info(args ...any) {
 	logger.Print(4, args...)
 }
 
+// Infof logs a formatted informational message.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or format string
+//     # args[1] - format string (if args[0] is context) or argument to print
+//     # args[2:] - arguments to format string
 func (logger *Logging) Infof(args ...any) {
 	logger.Printf(4, args...)
 }
 
+// Debug logs a debug message.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - arguments to print
 func (logger *Logging) Debug(args ...any) {
 	logger.Print(0, args...)
 }
 
+// Debugf logs a formatted debug message.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or format string
+//     # args[1] - format string (if args[0] is context)
+//     # args[2:] - arguments to format string
 func (logger *Logging) Debugf(args ...any) {
 	logger.Printf(0, args...)
 }
 
+// Warn logs a warning message.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - arguments to print
 func (logger *Logging) Warn(args ...any) {
 	logger.Print(1, args...)
 }
 
+// Warnf logs a formatted warning message.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or format string
+//     # args[1] - format string (if args[0] is context)
+//     # args[2:] - arguments to format string
 func (logger *Logging) Warnf(args ...any) {
 	logger.Printf(1, args...)
 }
 
+// Error logs an error message.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - arguments to print
 func (logger *Logging) Error(args ...any) {
 	logger.Print(2, args...)
 }
 
+// Errorf logs a formatted error message.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or format string
+//     # args[1] - format string (if args[0] is context)
+//     # args[2:] - arguments to format string
 func (logger *Logging) Errorf(args ...any) {
 	logger.Printf(2, args...)
 }
 
+// Fatal logs a fatal error message and exits the program.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - arguments to print
 func (logger *Logging) Fatal(args ...any) {
 	logger.Print(3, args...)
 	os.Exit(1) // Exit with status code 1
 }
 
+// Fatalf logs a formatted fatal error message and exits the program.
+//
+// Parameters:
+//   - args - arguments to print
+//     # args[0] - context (optional) or format string
+//     # args[1] - format string (if args[0] is context)
+//     # args[2:] - arguments to format string
 func (logger *Logging) Fatalf(args ...any) {
 	logger.Printf(3, args...)
 	os.Exit(1) // Exit with status code 1
