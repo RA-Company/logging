@@ -3,6 +3,7 @@ package logging
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -174,10 +175,12 @@ func (logger *Logging) Errorf(args ...any) {
 
 func (logger *Logging) Fatal(args ...any) {
 	logger.Print(3, args...)
+	os.Exit(1) // Exit with status code 1
 }
 
 func (logger *Logging) Fatalf(args ...any) {
 	logger.Printf(3, args...)
+	os.Exit(1) // Exit with status code 1
 }
 
 // Starting service

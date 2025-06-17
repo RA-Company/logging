@@ -1,6 +1,8 @@
 # Simple GO logger
 
-Simple output log with UUID according by context.Context parameter.
+Simple output log with UUID according by context.Context parameter. When logger is attached it's generate random global UUID.
+This approach is used for services performing parallel tasks in order to separate processes.
+Когда функции вызываются без параметра context.Context используется глобальное значение UUID
 
 # Example
 Usage:
@@ -9,7 +11,8 @@ package main
 
 import (
 	"context"
-	
+
+	"github.com/google/uuid"
 	"github.com/ra-company/logging"
 )
 
@@ -18,13 +21,22 @@ func main() {
 
 	title := "Sample"
 
-	logging.Logs.Info(ctx, "Service %s was started.", title)
+	logging.Logs.Infof(ctx, "Service %s was started.", title)
+
+	id := uuid.New().String()
+	ctx = context.WithValue(ctx, logging.CtxKeyUUID, id)
+
+	logging.Logs.Debugf(ctx, "Log data with UUID: %s.", id)
+
+	logging.Logs.Error("CTX isn't used.")
 }
 ```
 
 Sample output:
 ```
-2025/06/17 17:40:05.399	INF	[cd668e17-138e-4841-9c44-28b4558be374]	Service Sample was started.
+2025/06/17 18:17:42.016 INF     [f4d14d28-ae09-4aed-958a-c6dcb6da2a89]  Service Sample was started.
+2025/06/17 18:17:42.017 DBG     [3d861cf8-ab1c-4d6d-b91e-ba17027a0045]  Log data with UUID: 3d861cf8-ab1c-4d6d-b91e-ba17027a0045.
+2025/06/17 18:17:42.018 ERR     [f4d14d28-ae09-4aed-958a-c6dcb6da2a89]  CTX isn't used.
 ```
 
 # Staying up to date
