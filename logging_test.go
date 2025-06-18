@@ -207,6 +207,7 @@ func ExampleLogging_Fatal() {
 	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
 	Logs.Starting("test")
 	Logs.ShowTime = false
+	Logs.DontStop = true // Prevent exit on fatal error
 	defer Logs.Stopping()
 
 	ctx := context.Background()

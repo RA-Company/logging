@@ -1,7 +1,6 @@
 package logging
 
 import (
-	"context"
 	"os"
 )
 
@@ -50,73 +49,78 @@ func (dst *CustomLogger) SetLogger(logger Logger) {
 // and their responses.
 //
 // Parameters:
-//   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
 //   - args: The debug message to log, which can be any number of arguments.
-func (dst *CustomLogger) Debug(ctx context.Context, args ...any) {
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - additional arguments to print
+func (dst *CustomLogger) Debug(args ...any) {
 	if dst.logger != nil {
-		dst.logger.Debug(ctx, args)
+		dst.logger.Debug(args...)
 		return
 	}
 
-	Logs.Debugf(ctx, args)
+	Logs.Debugf(args...)
 }
 
 // Info logs an informational message using the provided logger or the default logging mechanism.
 // It is useful for logging general information about the API calls and their responses.
 //
 // Parameters:
-//   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
 //   - args: The informational message to log, which can be any number of arguments.
-func (dst *CustomLogger) Info(ctx context.Context, args ...any) {
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - additional arguments to print
+func (dst *CustomLogger) Info(args ...any) {
 	if dst.logger != nil {
-		dst.logger.Info(ctx, args)
+		dst.logger.Info(args...)
 		return
 	}
 
-	Logs.Infof(ctx, args)
+	Logs.Infof(args...)
 }
 
 // Warn logs a warning message using the provided logger or the default logging mechanism.
 // It is useful for logging potential issues or unexpected behavior in the API calls.
 //
 // Parameters:
-//   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
 //   - args: The warning message to log, which can be any number of arguments.
-func (dst *CustomLogger) Warn(ctx context.Context, args ...any) {
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - additional arguments to print
+func (dst *CustomLogger) Warn(args ...any) {
 	if dst.logger != nil {
-		dst.logger.Warn(ctx, args)
+		dst.logger.Warn(args...)
 		return
 	}
 
-	Logs.Warnf(ctx, args)
+	Logs.Warnf(args...)
 }
 
 // Error logs an error message using the provided logger or the default logging mechanism.
 // It is useful for logging errors encountered during API calls or other operations.
 //
 // Parameters:
-//   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
 //   - args: The error message to log, which can be any number of arguments.
-func (dst *CustomLogger) Error(ctx context.Context, args ...any) {
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - additional arguments to print
+func (dst *CustomLogger) Error(args ...any) {
 	if dst.logger != nil {
-		dst.logger.Error(ctx, args)
+		dst.logger.Error(args...)
 		return
 	}
 
-	Logs.Errorf(ctx, args)
+	Logs.Errorf(args...)
 }
 
 // Fatal logs a fatal error message using the provided logger or the default logging mechanism.
 // It is useful for logging critical errors that require immediate attention and may cause the application to exit.
 //
 // Parameters:
-//   - ctx: The context for the logging operation, allowing for cancellation and timeouts.
-//   - text: The fatal error message to log.
-func (dst *CustomLogger) Fatal(ctx context.Context, args ...any) {
+//   - args: The fatal error message to log, which can be any number of arguments.
+//     # args[0] - context (optional) or argument to print
+//     # args[1:] - additional arguments to print
+func (dst *CustomLogger) Fatal(args ...any) {
 	if dst.logger != nil {
-		dst.logger.Fatal(ctx, args)
+		dst.logger.Fatal(args...)
 		os.Exit(1) // Exit with status code 1
 	}
 
-	Logs.Fatalf(ctx, args)
+	Logs.Fatalf(args...)
 }

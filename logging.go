@@ -22,6 +22,7 @@ type Logging struct {
 	LogLevel   int    // Log level (0 - debug, 1 - warning, 2 - error, 3 - fatal, default 0)
 	ConsoleApp bool   // Console application flag (do not print logs in console app)
 	ShowTime   bool   // Show time in logs
+	DontStop   bool   // Do not stop service on fatal error
 	title      string // Process title
 }
 
@@ -256,7 +257,9 @@ func (logger *Logging) Errorf(args ...any) {
 //     # args[1:] - arguments to print
 func (logger *Logging) Fatal(args ...any) {
 	logger.Print(3, args...)
-	os.Exit(1) // Exit with status code 1
+	if !logger.DontStop {
+		os.Exit(1) // Exit with status code 1
+	}
 }
 
 // Fatalf logs a formatted fatal error message and exits the program.
@@ -268,7 +271,9 @@ func (logger *Logging) Fatal(args ...any) {
 //     # args[2:] - arguments to format string
 func (logger *Logging) Fatalf(args ...any) {
 	logger.Printf(3, args...)
-	os.Exit(1) // Exit with status code 1
+	if !logger.DontStop {
+		os.Exit(1) // Exit with status code 1
+	}
 }
 
 // Starting service
