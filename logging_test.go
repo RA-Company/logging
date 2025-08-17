@@ -3,6 +3,8 @@ package logging
 import (
 	"context"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestLogger_GetLevel(t *testing.T) {
@@ -27,17 +29,15 @@ func TestLogger_GetLevel(t *testing.T) {
 		Logs.LogLevel = tc.logLevel
 
 		got, _, _ := Logs.GetLevel(tc.level, context.Background())
-		if got != tc.want {
-			t.Errorf("Logs(%d) = %q; want: %q", tc.level, got, tc.want)
-		}
+		require.Equal(t, tc.want, got, "GetLevel(%d) = %q; want: %q", tc.level, got, tc.want)
 	}
 }
 
 func ExampleLogging_Print() {
 	Logs.LogLevel = 0
 	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
-	Logs.Starting("test")
 	Logs.ShowTime = false
+	Logs.Starting("test")
 	defer Logs.Stopping()
 
 	ctx := context.Background()

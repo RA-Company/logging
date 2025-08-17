@@ -3,10 +3,26 @@ package logging
 import (
 	"context"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestCustomLogger(t *testing.T) {
+	cLog := &Logging{
+		LogLevel:   0,
+		UUID:       "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049",
+		ShowTime:   false,
+		ConsoleApp: false,
+		DontStop:   true, // Prevent exit on fatal error
+	}
 
+	logs := &CustomLogger{}
+	logs.SetLogger(cLog)
+
+	require.NotNil(t, logs.logger, "CustomLogger should have a logger set")
+}
+
+func ExampleCustomLogger() {
 	cLog := &Logging{
 		LogLevel:   0,
 		UUID:       "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049",
@@ -29,51 +45,56 @@ func TestCustomLogger(t *testing.T) {
 	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
 
 	world := "World"
-	universe := "Universe"
 
-	logs.Debug("Hello %s", world)
-	logs.Debug("Hello World")
-	logs.Debug(ctx, "Hello %s", world)
-	logs.Debug(ctx, "Hello World")
-	logs.Debug("Hello %s", universe)
-	logs.Debug(ctx, "Hello %s", universe)
-	logs.Info("Hello %s", world)
-	logs.Info(ctx, "Hello %s", world)
-	logs.Info("Hello %s", universe)
-	logs.Info(ctx, "Hello %s", universe)
-	logs.Warn("Hello %s", world)
-	logs.Warn(ctx, "Hello %s", world)
-	logs.Warn("Hello %s", universe)
-	logs.Warn(ctx, "Hello %s", universe)
-	logs.Error("Hello %s", world)
-	logs.Error(ctx, "Hello %s", world)
-	logs.Error("Hello %s", universe)
-	logs.Error(ctx, "Hello %s", universe)
-	logs.Fatal(ctx, "Hello %s", universe)
+	Logs.Debug(ctx, "Standard Logger with ctx and variable: %s", world)
+	Logs.Debug(ctx, "Standard Logger with ctx without variable")
+	Logs.Debug("Standard Logger without ctx and variable: %s", world)
+	Logs.Debug("Standard Logger without ctx without variable")
+
+	logs.Debug(ctx, "CustomerLogger with ctx and variable: %s", world)
+	logs.Debug(ctx, "CustomerLogger with ctx without variable")
+	logs.Debug("CustomerLogger without ctx with variable: %s", world)
+	logs.Debug("CustomerLogger without ctx without variable")
+
+	logs.Info(ctx, "CustomerLogger with ctx and variable: %s", world)
+	logs.Info(ctx, "CustomerLogger with ctx without variable")
+	logs.Info("CustomerLogger without ctx with variable: %s", world)
+	logs.Info("CustomerLogger without ctx without variable")
+
+	logs.Warn(ctx, "CustomerLogger with ctx and variable: %s", world)
+	logs.Warn(ctx, "CustomerLogger with ctx without variable")
+	logs.Warn("CustomerLogger without ctx with variable: %s", world)
+	logs.Warn("CustomerLogger without ctx without variable")
+
+	logs.Error(ctx, "CustomerLogger with ctx and variable: %s", world)
+	logs.Error(ctx, "CustomerLogger with ctx without variable")
+	logs.Error("CustomerLogger without ctx with variable: %s", world)
+	logs.Error("CustomerLogger without ctx without variable")
+
+	logs.Fatal(ctx, "CustomerLogger with ctx and variable: %s", world)
 
 	// Unordered output:
 	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd050]	test service is starting...
 	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd050]	test service is stopping...
-	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
-	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
-	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
-	// DBG	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
-	// DBG	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
-	// DBG	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello Universe
-	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
-	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
-	// INF	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
-	// INF	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello Universe
-	// WRN	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
-	// WRN	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
-	// WRN	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
-	// WRN	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello Universe
-	// ERR	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
-	// ERR	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
-	// ERR	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
-	// ERR	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello Universe
-	// FTL	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello World
-	// FTL	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	Hello Universe
-	// FTL	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
-	// FTL	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello Universe
+	// DBG	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Standard Logger with ctx and variable: World
+	// DBG	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Standard Logger with ctx without variable
+	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd050]	Standard Logger without ctx and variable: World
+	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd050]	Standard Logger without ctx without variable
+	// DBG	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx and variable: World
+	// DBG	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx without variable
+	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	CustomerLogger without ctx with variable: World
+	// DBG	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	CustomerLogger without ctx without variable
+	// INF	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx and variable: World
+	// INF	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx without variable
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	CustomerLogger without ctx with variable: World
+	// INF	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	CustomerLogger without ctx without variable
+	// WRN	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx and variable: World
+	// WRN	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx without variable
+	// WRN	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	CustomerLogger without ctx with variable: World
+	// WRN	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	CustomerLogger without ctx without variable
+	// ERR	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx and variable: World
+	// ERR	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx without variable
+	// ERR	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	CustomerLogger without ctx with variable: World
+	// ERR	[b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049]	CustomerLogger without ctx without variable
+	// FTL	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	CustomerLogger with ctx and variable: World
 }
