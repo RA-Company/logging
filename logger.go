@@ -1,9 +1,5 @@
 package logging
 
-import (
-	"os"
-)
-
 // Logger Interface defines the methods for logging at different levels.
 type Logger interface {
 	// Debug logs a message at Debug level.
@@ -119,7 +115,7 @@ func (dst *CustomLogger) Error(args ...any) {
 func (dst *CustomLogger) Fatal(args ...any) {
 	if dst.logger != nil {
 		dst.logger.Fatal(args...)
-		os.Exit(1) // Exit with status code 1
+		return
 	}
 
 	Logs.Fatalf(args...)

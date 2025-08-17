@@ -172,7 +172,7 @@ func (logger *Logging) TimeToStr(t time.Time) string {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Info(args ...any) {
-	logger.Print(4, args...)
+	logger.Printf(4, args...)
 }
 
 // Infof logs a formatted informational message.
@@ -193,7 +193,7 @@ func (logger *Logging) Infof(args ...any) {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Debug(args ...any) {
-	logger.Print(0, args...)
+	logger.Printf(0, args...)
 }
 
 // Debugf logs a formatted debug message.
@@ -214,7 +214,7 @@ func (logger *Logging) Debugf(args ...any) {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Warn(args ...any) {
-	logger.Print(1, args...)
+	logger.Printf(1, args...)
 }
 
 // Warnf logs a formatted warning message.
@@ -235,7 +235,7 @@ func (logger *Logging) Warnf(args ...any) {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Error(args ...any) {
-	logger.Print(2, args...)
+	logger.Printf(2, args...)
 }
 
 // Errorf logs a formatted error message.
@@ -256,7 +256,7 @@ func (logger *Logging) Errorf(args ...any) {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Fatal(args ...any) {
-	logger.Print(3, args...)
+	logger.Printf(3, args...)
 	if !logger.DontStop {
 		os.Exit(1) // Exit with status code 1
 	}
