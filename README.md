@@ -62,6 +62,6 @@ We currently support the most recent major Go versions from 1.25.5 onward.
 This project is licensed under the terms of the GPL-3.0 license.
 
 # Used libraries
-* [gopkg.in/Graylog2/go-gelf.v2/gelf](https://gopkg.in/Graylog2/go-gelf.v2/gelf) -- GELF Library and Writer for Go (MIT License)
-* [github.com/google/uuid](https://github.com/google/uuid) -- Go package for UUIDs based on RFC 4122 and DCE 1.1: Authentication and Security Services. (BSD-3 License)
-* [github.com/stretchr/testify](https://github.com/stretchr/testify) - Thou Shalt Write Tests (MIT License)
+* https://gopkg.in/Graylog2/go-gelf.v2/gelf -- GELF Library and Writer for Go (MIT License)
+* https://github.com/google/uuid -- Go package for UUIDs based on RFC 4122 and DCE 1.1: Authentication and Security Services. (BSD-3 License)
+* https://github.com/stretchr/testify - Thou Shalt Write Tests (MIT License)
