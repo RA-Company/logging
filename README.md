@@ -8,7 +8,7 @@ When functions are called without a context.Context parameter, a global UUID val
 
 # Example
 Usage:
-```
+```golang
 package main
 
 import (
@@ -35,7 +35,7 @@ func main() {
 ```
 
 Sample output:
-```
+```log
 2025/06/17 18:17:42.016 INF     [f4d14d28-ae09-4aed-958a-c6dcb6da2a89]  Service Sample was started.
 2025/06/17 18:17:42.017 DBG     [3d861cf8-ab1c-4d6d-b91e-ba17027a0045]  Log data with UUID: 3d861cf8-ab1c-4d6d-b91e-ba17027a0045.
 2025/06/17 18:17:42.018 ERR     [f4d14d28-ae09-4aed-958a-c6dcb6da2a89]  CTX isn't used.
@@ -45,7 +45,7 @@ Sample output:
 
 The system can send log data to a Graylog server. To enable logging to Graylog, the following global variables must be configured:
 
-```
+```golang
 GraylogAddr string = ""               // Graylog address (when empty, Graylog is disabled)
 Application string = "go-application" // Application name
 Host        string = "localhost"      // Host name
