@@ -2,19 +2,26 @@ package logging
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/google/uuid"
+	"gopkg.in/Graylog2/go-gelf.v2/gelf"
 )
 
 // Context key type
 type CtxKey string
 
 var (
-	Logs       Logging
-	CtxKeyUUID CtxKey = "process-uuid" // Context key for process UUID
+	Logs        Logging
+	CtxKeyUUID  CtxKey = "process-uuid"   // Context key for process UUID
+	GraylogAddr string = ""               // Graylog address (when empty, Graylog is disabled)
+	Application string = "go-application" // Application name
+	Host        string = "localhost"      // Host name
+	Facility    string = "facility"       // Facility name
 )
 
 type Logging struct {
@@ -24,6 +31,7 @@ type Logging struct {
 	ShowTime   bool   // Show time in logs
 	DontStop   bool   // Do not stop service on fatal error
 	title      string // Process title
+	graylog    *gelf.UDPWriter
 }
 
 // Get level of logging by level and context if it's present
@@ -78,23 +86,28 @@ func (logger *Logging) Print(level int, args ...any) {
 		return // do not print logs in console app
 	}
 
+	t := time.Now()
+
+	text := ""
 	if lev != "" {
-		t := time.Now()
 		if logger.ShowTime {
 			if withContext {
-				fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, fmt.Sprint(args[1:]...))
+				text = fmt.Sprint(args[1:]...)
 			} else {
-				fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, fmt.Sprint(args...))
+				text = fmt.Sprint(args...)
 			}
+			fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, text)
 		} else {
 			if withContext {
-				fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, fmt.Sprint(args[1:]...))
+				text = fmt.Sprint(args[1:]...)
 			} else {
-				fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, fmt.Sprint(args...))
+				text = fmt.Sprint(args...)
 			}
+			fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, text)
 		}
-
 	}
+
+	logger.sendGelfMessage(text, t, lev, uuid)
 }
 
 // Printf logs formatted output to console
@@ -117,30 +130,76 @@ func (logger *Logging) Printf(level int, args ...any) {
 		return // do not print logs in console app
 	}
 
+	t := time.Now()
+	text := ""
 	if lev != "" {
-		t := time.Now()
 		if withContext {
 			if logger.ShowTime {
 				if len(args) > 2 {
-					fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, fmt.Sprintf(args[1].(string), args[2:]...))
+					text = fmt.Sprintf(args[1].(string), args[2:]...)
 				} else {
-					fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, fmt.Sprint(args[1:]...))
+					text = fmt.Sprint(args[1:]...)
 				}
+				fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, text)
 			} else {
 				if len(args) > 2 {
-					fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, fmt.Sprintf(args[1].(string), args[2:]...))
+					text = fmt.Sprintf(args[1].(string), args[2:]...)
 				} else {
-					fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, fmt.Sprint(args[1:]...))
+					text = fmt.Sprint(args[1:]...)
 				}
+				fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, text)
 			}
 		} else {
 			if logger.ShowTime {
-				fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, fmt.Sprintf(args[0].(string), args[1:]...))
+				text = fmt.Sprintf(args[0].(string), args[1:]...)
 			} else {
-				fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, fmt.Sprintf(args[0].(string), args[1:]...))
+				text = fmt.Sprintf(args[0].(string), args[1:]...)
 			}
+			fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, text)
 		}
 	}
+
+	logger.sendGelfMessage(text, t, lev, uuid)
+}
+
+func (logger *Logging) sendGelfMessage(text string, t time.Time, lev, uuid string) {
+	if GraylogAddr == "" || text == "" {
+		return
+	}
+
+	if logger.graylog == nil {
+		if writer, err := gelf.NewUDPWriter(GraylogAddr); err != nil {
+			return
+		} else {
+			logger.graylog = writer
+		}
+	}
+
+	var ansiRegexp = regexp.MustCompile(`\x1b\[[0-9;]*[A-Za-z]`)
+
+	message := gelf.Message{
+		Short:    ansiRegexp.ReplaceAllString(text, ""),
+		Version:  "1.1",
+		Host:     Host,
+		TimeUnix: float64(t.UnixNano()) / float64(time.Second),
+		Facility: Facility,
+		RawExtra: json.RawMessage(`{"_application":"` + Application + `", "_uuid":"` + uuid + `", "_type":"` + lev + `"}`),
+	}
+
+	switch lev {
+	case "DBG":
+		message.Level = gelf.LOG_DEBUG
+	case "WRN":
+		message.Level = gelf.LOG_WARNING
+	case "ERR":
+		message.Level = gelf.LOG_ERR
+	case "FTL":
+		message.Level = gelf.LOG_CRIT
+	case "INF":
+		message.Level = gelf.LOG_INFO
+	}
+
+	logger.graylog.WriteMessage(&message)
 }
 
 // TimeToStr converts time.Time to string in format "2006/01/02 15:04:05.999"

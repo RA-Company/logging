@@ -1,10 +1,11 @@
 module github.com/ra-company/logging
 
-go 1.24.5
+go 1.25.5
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
+	gopkg.in/Graylog2/go-gelf.v2 v2.0.0-20191017102106-1550ee647df0
 )
 
 require (

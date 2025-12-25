@@ -2,6 +2,7 @@ package logging
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -242,4 +243,28 @@ func ExampleLogging_Fatal() {
 	// FTL	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello Universe
 	// FTL	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello World
 	// FTL	[4577c272-e9b8-4a19-a9d0-4ec0bde6063f]	Hello Universe
+}
+
+func TestGelf(t *testing.T) {
+	str := os.Getenv("GRAYLOG_URL")
+	require.NotEmpty(t, str, "Set GRAYLOG_URL environment variable to test Graylog connection")
+
+	GraylogAddr = str
+	Host = "current-host"
+	Logs.ConsoleApp = false
+	Logs.UUID = "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"
+	Logs.Starting("test")
+	defer Logs.Stopping()
+
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
+
+	Logs.Info(ctx, "Testing Graylog connection")
+	Logs.Infof(ctx, "Testing Graylog connection with %s", "formatting")
+	Logs.Info(ctx, "Testing Graylog connection with context")
+	Logs.Infof(ctx, "Testing Graylog connection with context and %s", "formatting")
+	Logs.Debug(ctx, "Debug message")
+	Logs.Warn(ctx, "Warning message")
+	Logs.Error(ctx, "Error message")
+	Logs.Info(ctx, "\033[1m\033[36mColored message\033[0m")
 }
