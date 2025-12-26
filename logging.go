@@ -90,19 +90,14 @@ func (logger *Logging) Print(level int, args ...any) {
 
 	text := ""
 	if lev != "" {
+		if withContext {
+			text = fmt.Sprint(args[1:]...)
+		} else {
+			text = fmt.Sprint(args...)
+		}
 		if logger.ShowTime {
-			if withContext {
-				text = fmt.Sprint(args[1:]...)
-			} else {
-				text = fmt.Sprint(args...)
-			}
 			fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, text)
 		} else {
-			if withContext {
-				text = fmt.Sprint(args[1:]...)
-			} else {
-				text = fmt.Sprint(args...)
-			}
 			fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, text)
 		}
 	}
@@ -134,27 +129,17 @@ func (logger *Logging) Printf(level int, args ...any) {
 	text := ""
 	if lev != "" {
 		if withContext {
-			if logger.ShowTime {
-				if len(args) > 2 {
-					text = fmt.Sprintf(args[1].(string), args[2:]...)
-				} else {
-					text = fmt.Sprint(args[1:]...)
-				}
-				fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, text)
+			if len(args) > 2 {
+				text = fmt.Sprintf(args[1].(string), args[2:]...)
 			} else {
-				if len(args) > 2 {
-					text = fmt.Sprintf(args[1].(string), args[2:]...)
-				} else {
-					text = fmt.Sprint(args[1:]...)
-				}
-				fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, text)
+				text = fmt.Sprint(args[1:]...)
 			}
 		} else {
-			if logger.ShowTime {
-				text = fmt.Sprintf(args[0].(string), args[1:]...)
-			} else {
-				text = fmt.Sprintf(args[0].(string), args[1:]...)
-			}
+			text = fmt.Sprintf(args[0].(string), args[1:]...)
+		}
+		if logger.ShowTime {
+			fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, text)
+		} else {
 			fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, text)
 		}
 	}
