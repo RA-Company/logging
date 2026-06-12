@@ -18,9 +18,13 @@ var ansiRegexp = regexp.MustCompile(`\x1b\[[0-9;]*[A-Za-z]`)
 // Context key type
 type CtxKey string
 
+const (
+	CtxKeyUUID CtxKey = "process-uuid" // Context key for process UUID
+	fixedTime  string = "2006/01/02 15:04:05.000"
+)
+
 var (
 	Logs        Logging
-	CtxKeyUUID  CtxKey = "process-uuid"   // Context key for process UUID
 	GraylogAddr string = ""               // Graylog address (when empty, Graylog is disabled)
 	Application string = "go-application" // Application name
 	Host        string = "localhost"      // Host name
@@ -78,13 +82,16 @@ func (logger *Logging) GetLevel(level int, ctx any) (string, string, bool) {
 //   - level - log level (0 - debug, 1 - warning, 2 - error, 3 - fatal, 4 - info)
 //   - args - arguments to print
 func (logger *Logging) Print(level int, args ...any) {
+	if len(args) == 0 {
+		return
+	}
 	lev, uuid, withContext := logger.GetLevel(level, args[0])
 	if logger.ConsoleApp {
 		if level == 2 || level == 3 {
 			if withContext {
-				fmt.Print(fmt.Sprint(args[1:]...))
+				fmt.Printf("%s\n", fmt.Sprint(args[1:]...))
 			} else {
-				fmt.Print(fmt.Sprint(args...))
+				fmt.Printf("%s\n", fmt.Sprint(args...))
 			}
 		}
 		return // do not print logs in console app
@@ -100,7 +107,7 @@ func (logger *Logging) Print(level int, args ...any) {
 			text = fmt.Sprint(args...)
 		}
 		if logger.ShowTime {
-			fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, text)
+			fmt.Printf("%s\t%v\t[%v]\t%v\n", t.Format(fixedTime), lev, uuid, text)
 		} else {
 			fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, text)
 		}
@@ -117,6 +124,9 @@ func (logger *Logging) Print(level int, args ...any) {
 //     # args[0] - format string
 //     # args[1:] - arguments to format string
 func (logger *Logging) Printf(level int, args ...any) {
+	if len(args) < 2 {
+		return
+	}
 	lev, uuid, withContext := logger.GetLevel(level, args[0])
 	if logger.ConsoleApp {
 		if level == 2 || level == 3 {
@@ -142,7 +152,7 @@ func (logger *Logging) Printf(level int, args ...any) {
 			text = fmt.Sprintf(args[0].(string), args[1:]...)
 		}
 		if logger.ShowTime {
-			fmt.Printf("%s\t%v\t[%v]\t%v\n", logger.TimeToStr(t), lev, uuid, text)
+			fmt.Printf("%s\t%v\t[%v]\t%v\n", t.Format(fixedTime), lev, uuid, text)
 		} else {
 			fmt.Printf("%v\t[%v]\t%v\n", lev, uuid, text)
 		}
@@ -168,6 +178,11 @@ func (logger *Logging) sendGelfMessage(text string, t time.Time, lev, uuid strin
 	graylogWriter := logger.graylog
 	logger.mu.Unlock()
 
+	extra, _ := json.Marshal(map[string]string{
+		"_application": Application,
+		"_uuid":        uuid,
+		"_type":        lev,
+	})
 
 	message := gelf.Message{
 		Short:    ansiRegexp.ReplaceAllString(text, ""),
@@ -175,7 +190,7 @@ func (logger *Logging) sendGelfMessage(text string, t time.Time, lev, uuid strin
 		Host:     Host,
 		TimeUnix: float64(t.UnixNano()) / float64(time.Second),
 		Facility: Facility,
-		RawExtra: json.RawMessage(`{"_application":"` + Application + `", "_uuid":"` + uuid + `", "_type":"` + lev + `"}`),
+		RawExtra: extra,
 	}
 
 	switch lev {
@@ -194,28 +209,6 @@ func (logger *Logging) sendGelfMessage(text string, t time.Time, lev, uuid strin
 	graylogWriter.WriteMessage(&message)
 }
 
-// TimeToStr converts time.Time to string in format "2006/01/02 15:04:05.999"
-// It ensures that the string is always 23 characters long by appending "00" or "0" as needed.
-//
-// Parameters:
-//   - t - time.Time object to convert
-//
-// Returns:
-//   - string: representation of the time in the specified format
-func (logger *Logging) TimeToStr(t time.Time) string {
-	str := t.Format("2006/01/02 15:04:05.999")
-
-	if len(str) == 19 {
-		return str + ".000"
-	} else if len(str) == 21 {
-		return str + "00"
-	} else if len(str) == 22 {
-		return str + "0"
-	}
-
-	return str
-}
-
 // Info logs an informational message.
 //
 // Parameters:
@@ -223,7 +216,7 @@ func (logger *Logging) TimeToStr(t time.Time) string {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Info(args ...any) {
-	logger.Printf(4, args...)
+	logger.Print(4, args...)
 }
 
 // Infof logs a formatted informational message.
@@ -244,7 +237,7 @@ func (logger *Logging) Infof(args ...any) {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Debug(args ...any) {
-	logger.Printf(0, args...)
+	logger.Print(0, args...)
 }
 
 // Debugf logs a formatted debug message.
@@ -265,7 +258,7 @@ func (logger *Logging) Debugf(args ...any) {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Warn(args ...any) {
-	logger.Printf(1, args...)
+	logger.Print(1, args...)
 }
 
 // Warnf logs a formatted warning message.
@@ -286,7 +279,7 @@ func (logger *Logging) Warnf(args ...any) {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Error(args ...any) {
-	logger.Printf(2, args...)
+	logger.Print(2, args...)
 }
 
 // Errorf logs a formatted error message.
@@ -307,7 +300,7 @@ func (logger *Logging) Errorf(args ...any) {
 //     # args[0] - context (optional) or argument to print
 //     # args[1:] - arguments to print
 func (logger *Logging) Fatal(args ...any) {
-	logger.Printf(3, args...)
+	logger.Print(3, args...)
 	if !logger.DontStop {
 		os.Exit(1) // Exit with status code 1
 	}

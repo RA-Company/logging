@@ -54,7 +54,7 @@ func (dst *CustomLogger) Debug(args ...any) {
 		return
 	}
 
-	Logs.Debugf(args...)
+	Logs.Debug(args...)
 }
 
 // Info logs an informational message using the provided logger or the default logging mechanism.
@@ -70,7 +70,7 @@ func (dst *CustomLogger) Info(args ...any) {
 		return
 	}
 
-	Logs.Infof(args...)
+	Logs.Info(args...)
 }
 
 // Warn logs a warning message using the provided logger or the default logging mechanism.
@@ -86,7 +86,7 @@ func (dst *CustomLogger) Warn(args ...any) {
 		return
 	}
 
-	Logs.Warnf(args...)
+	Logs.Warn(args...)
 }
 
 // Error logs an error message using the provided logger or the default logging mechanism.
@@ -102,7 +102,7 @@ func (dst *CustomLogger) Error(args ...any) {
 		return
 	}
 
-	Logs.Errorf(args...)
+	Logs.Error(args...)
 }
 
 // Fatal logs a fatal error message using the provided logger or the default logging mechanism.
@@ -118,5 +118,5 @@ func (dst *CustomLogger) Fatal(args ...any) {
 		return
 	}
 
-	Logs.Fatalf(args...)
+	Logs.Fatal(args...)
 }
