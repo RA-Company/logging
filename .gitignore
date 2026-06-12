@@ -3,6 +3,7 @@
 .env
 .test.env
 tmp
+.claude
 
 # Visual Studio Code
 .vscode/*
