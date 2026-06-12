@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
 	"gopkg.in/Graylog2/go-gelf.v2/gelf"
 )
+
+var ansiRegexp = regexp.MustCompile(`\x1b\[[0-9;]*[A-Za-z]`)
 
 // Context key type
 type CtxKey string
@@ -32,6 +35,7 @@ type Logging struct {
 	DontStop   bool   // Do not stop service on fatal error
 	title      string // Process title
 	graylog    *gelf.UDPWriter
+	mu         sync.Mutex
 }
 
 // Get level of logging by level and context if it's present
@@ -152,15 +156,18 @@ func (logger *Logging) sendGelfMessage(text string, t time.Time, lev, uuid strin
 		return
 	}
 
+	logger.mu.Lock()
 	if logger.graylog == nil {
-		if writer, err := gelf.NewUDPWriter(GraylogAddr); err != nil {
+		writer, err := gelf.NewUDPWriter(GraylogAddr)
+		if err != nil {
+			logger.mu.Unlock()
 			return
-		} else {
-			logger.graylog = writer
 		}
+		logger.graylog = writer
 	}
+	graylogWriter := logger.graylog
+	logger.mu.Unlock()
 
-	var ansiRegexp = regexp.MustCompile(`\x1b\[[0-9;]*[A-Za-z]`)
 
 	message := gelf.Message{
 		Short:    ansiRegexp.ReplaceAllString(text, ""),
@@ -184,7 +191,7 @@ func (logger *Logging) sendGelfMessage(text string, t time.Time, lev, uuid strin
 		message.Level = gelf.LOG_INFO
 	}
 
-	logger.graylog.WriteMessage(&message)
+	graylogWriter.WriteMessage(&message)
 }
 
 // TimeToStr converts time.Time to string in format "2006/01/02 15:04:05.999"
