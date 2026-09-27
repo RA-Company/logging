@@ -76,11 +76,13 @@ func (logger *Logging) GetLevel(level int, ctx any) (string, string, bool) {
 	return levels[level], uuid, withContext
 }
 
-// Print logs to console
+// Print is the low-level unformatted log method. Prefer the typed helpers
+// (Debug, Info, Warn, Error, Fatal) over calling Print directly.
 //
-// Parameters:
-//   - level - log level (0 - debug, 1 - warning, 2 - error, 3 - fatal, 4 - info)
-//   - args - arguments to print
+// args layout (see package doc for the full calling convention):
+//
+//	Print(level, msg, ...)            — no context, args joined via fmt.Sprint
+//	Print(level, ctx, msg, ...)       — context in args[0], rest joined via fmt.Sprint
 func (logger *Logging) Print(level int, args ...any) {
 	if len(args) == 0 {
 		return
@@ -116,14 +118,18 @@ func (logger *Logging) Print(level int, args ...any) {
 	logger.sendGelfMessage(text, t, lev, uuid)
 }
 
-// Printf logs formatted output to console
+// Printf is the low-level formatted log method. Prefer the typed helpers
+// (Debugf, Infof, Warnf, Errorf, Fatalf) over calling Printf directly.
 //
-// Parameters:
-//   - level - log level (0 - debug, 1 - warning, 2 - error, 3 - fatal, 4 - info)
-//   - args - arguments to print
-//     # args[0] - format string
-//     # args[1:] - arguments to format string
+// args layout (see package doc for the full calling convention):
+//
+//	Printf(level, format, args...)          — no context; args[0] must be a string
+//	Printf(level, ctx, format, args...)     — context in args[0]; args[1] must be a string
+//
+// Passing a non-string in the format position is a caller error; the call is
+// silently discarded via a deferred recover.
 func (logger *Logging) Printf(level int, args ...any) {
+	defer func() { recover() }() //nolint:errcheck
 	if len(args) < 2 {
 		return
 	}

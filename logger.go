@@ -3,45 +3,45 @@ package logging
 // Logger Interface defines the methods for logging at different levels.
 type Logger interface {
 	// Debug logs a message at Debug level.
-	// The first argument is the context for the log entry,
+	// The optional first argument may be a context.Context.
 	Debug(args ...any)
 
 	// Debugf logs a formatted message at Debug level.
-	// The first argument is the context for the log entry,
+	// The optional first argument may be a context.Context.
 	Debugf(args ...any)
 
 	// Info logs a message at Info level.
-	// The first argument is the context for the log entry,
+	// The optional first argument may be a context.Context.
 	Info(args ...any)
 
 	// Infof logs a formatted message at Info level.
-	// The first argument is the context for the log entry,
+	// The optional first argument may be a context.Context.
 	Infof(args ...any)
 
 	// Warn logs a message at Warning level.
-	// The first argument is the context for the log entry,
+	// The optional first argument may be a context.Context.
 	Warn(args ...any)
 
 	// Warnf logs a formatted message at Warning level.
-	// The first argument is the context for the log entry,
+	// The optional first argument may be a context.Context.
 	Warnf(args ...any)
 
 	// Error logs a message at Error level.
-	// The first argument is the context for the log entry,
+	// The optional first argument may be a context.Context.
 	Error(args ...any)
 
 	// Errorf logs a formatted message at Error level.
-	// The first argument is the context for the log entry,
+	// The optional first argument may be a context.Context.
 	Errorf(args ...any)
 
 	// Fatal logs a message at Fatal level
-	// and process will exit with status set to 1.
-	// The first argument is the context for the log entry,
+	// and exits the process with status 1.
+	// The optional first argument may be a context.Context.
 	Fatal(args ...any)
 
 	// Fatalf logs a formatted message at Fatal level
-	// and process will exit with status set to 1.
-	// The first argument is the context for the log entry,
+	// and exits the process with status 1.
+	// The optional first argument may be a context.Context.
 	Fatalf(args ...any)
 }
 

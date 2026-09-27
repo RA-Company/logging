@@ -1,5 +1,5 @@
 tests:
-	@go clean -testcache && go test -cover -race ./...
+	@. ./.test.env && go clean -testcache && go test -cover -race ./...
 
 %::
 	@true

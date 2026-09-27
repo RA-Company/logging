@@ -372,17 +372,22 @@ func TestCustomLogger_NilLogger_FallsBackToGlobal(t *testing.T) {
 	origLogLevel := Logs.LogLevel
 	origUUID := Logs.UUID
 	origShowTime := Logs.ShowTime
+	origConsoleApp := Logs.ConsoleApp
+	origDontStop := Logs.DontStop
+	origTitle := Logs.title
 	defer func() {
 		Logs.LogLevel = origLogLevel
 		Logs.UUID = origUUID
 		Logs.ShowTime = origShowTime
+		Logs.ConsoleApp = origConsoleApp
+		Logs.DontStop = origDontStop
+		Logs.title = origTitle
 	}()
 
-	Logs = Logging{
-		LogLevel: 0,
-		UUID:     "global-fallback",
-		ShowTime: false,
-	}
+	Logs.LogLevel = 0
+	Logs.UUID = "global-fallback"
+	Logs.ShowTime = false
+	Logs.ConsoleApp = false
 
 	cl := &CustomLogger{} // logger == nil
 
@@ -535,22 +540,6 @@ func TestStarting_Stopping_Output(t *testing.T) {
 
 	assert.Contains(t, output, "MyService service is starting...")
 	assert.Contains(t, output, "MyService service is stopping...")
-}
-
-// --- TestGelf skips when GRAYLOG_URL is not set ---
-
-func TestGelf_SkipIfNoURL(t *testing.T) {
-	str := os.Getenv("GRAYLOG_URL")
-	if str == "" {
-		t.Skip("GRAYLOG_URL not set; skipping Graylog integration test")
-	}
-
-	GraylogAddr = str
-	Host = "current-host"
-	logger := &Logging{ConsoleApp: false, UUID: "b846c7ab-9bc3-4c3a-b9e9-c65ae7bdd049"}
-
-	ctx := context.WithValue(context.Background(), CtxKeyUUID, "4577c272-e9b8-4a19-a9d0-4ec0bde6063f")
-	logger.Info(ctx, "Testing Graylog from missing tests")
 }
 
 // Debug passes args through fmt.Sprint — no format substitution occurs.
