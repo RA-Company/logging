@@ -124,8 +124,15 @@ MIT — see [LICENSE](LICENSE).
 
 ## Dependencies
 
+**Runtime**
+
 | Library | Purpose | License |
 |---------|---------|---------|
 | [gopkg.in/Graylog2/go-gelf.v2](https://github.com/Graylog2/go-gelf) | GELF UDP writer | MIT |
 | [github.com/google/uuid](https://github.com/google/uuid) | RFC 4122 UUID generation | BSD-3-Clause |
-| [github.com/stretchr/testify](https://github.com/stretchr/testify) | Test assertions (test only) | MIT |
+
+**Tests only**
+
+| Library | Purpose | License |
+|---------|---------|---------|
+| [github.com/stretchr/testify](https://github.com/stretchr/testify) | Test assertions | MIT |
